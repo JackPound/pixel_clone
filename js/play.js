@@ -3,11 +3,18 @@ console.log('play.js linked');
 var playState = {
 	player: null,
 	mob: null,
+	layer: null,
 	create: function() {
+				// set up world from imported TILED
+		// var map = game.add.tilemap('room1');
+		// map.addTilesetImage('world', 'tiles1');
+
 				// bring new player into world
 		this.player = new Player(game.world.centerX, game.world.centerY);
 		game.add.existing(this.player);
 		game.physics.enable(this.player, Phaser.Physics.ARCADE);
+
+		// this.layer = map.createLayer('floor'); 
 				// bring mob of enemies into world
 		this.mob = game.add.group();
 		this.mob.add(Enemy(100, 100));
@@ -36,6 +43,7 @@ var playState = {
 function Player(x, y) {
 	var player = game.add.sprite(game.world.centerX, game.world.centerY, 'warrior');
 	player.frame = 0;
+	player.z = 3;
 	player.scale.setTo(3,3);
 	player.xDestination = x;
 	player.yDestination = y;
@@ -101,7 +109,7 @@ function Enemy(x, y) {
 	enemy.scale.setTo(3, 3);
 	enemy.anchor.setTo(.5, 1);
 	enemy.animations.add('idle', [0, 8], 3);
-
+	enemy.animations.add('attack', [0, 2], 3);
 	enemy.goToXY = function(x, y) {
 
 	}

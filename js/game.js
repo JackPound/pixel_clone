@@ -1,6 +1,6 @@
 console.log('game.js linked');
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, null, 'gameDiv');
+var game = new Phaser.Game(768, 512 , Phaser.AUTO, null, 'gameDiv');
 
 //add each game state
 
