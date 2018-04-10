@@ -147,9 +147,3 @@ function Enemy(x, y) {
 	}
 	return enemy;
 };
-
-
-// mob.children.forEach(function(r){
-// 	game.physics.arcade.moveToObject(r, playstate.player)
-// })
-
