@@ -6,19 +6,21 @@ var playState = {
 	layer: null,
 	create: function() {
 				// set up world from imported TILED
-		// var map = game.add.tilemap('room1');
-		// map.addTilesetImage('world', 'tiles1');
-
+		var map = game.add.tilemap('room1');
+		map.addTilesetImage('tiles1', 'tiles1');
+		map.setCollision([4]);
+		this.layer = map.createLayer('floor');
+		this.layer = map.createLayer('walls');
 				// bring new player into world
 		this.player = new Player(game.world.centerX, game.world.centerY);
 		game.add.existing(this.player);
 		game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
-		// this.layer = map.createLayer('floor'); 
+		
 				// bring mob of enemies into world
 		this.mob = game.add.group();
 		this.mob.add(Enemy(100, 100));
-		this.mob.add(Enemy(200, 200));
+		// this.mob.add(Enemy(200, 200));
 		this.mob.forEach(function(enemy, index) {
 			game.physics.enable(enemy, Phaser.Physics.ARCADE);
 			enemy.body.immovable = true;
@@ -30,20 +32,31 @@ var playState = {
 	},
 				// update function to constantly run updates on character state / enemy state / world state
 	update: function() {
+		var self = this
 		this.player.update();
 		this.mob.forEach(function(enemy, index) {
 			enemy.update();
 		});
 		game.physics.arcade.collide(this.player, this.mob, function(){
+			console.log('hit rat')
 			playState.player.stopPlayer();
 		});
+		game.physics.arcade.collide(this.player, self.layer, function(){
+			console.log('hit walls');
+			playState.player.stopPlayer();
+		});
+		if (game.physics.arcade.distanceBetween(this.player, this.mob) < 270) {
+			this.game.physics.arcade.moveToObject(this.enemy, this.player, 70)
+			console.log('nearby')
+		}
+		// console.log(game.physics.arcade.distanceBetween(this.player, this.mob))
 	}
 };
 		// player constructor
 function Player(x, y) {
 	var player = game.add.sprite(game.world.centerX, game.world.centerY, 'warrior');
 	player.frame = 0;
-	player.z = 3;
+	// player.z = 3;
 	player.scale.setTo(3,3);
 	player.xDestination = x;
 	player.yDestination = y;
@@ -106,7 +119,7 @@ function Enemy(x, y) {
 	enemy.xDest = x;
 	enemy.yDest = y;
 	enemy.frame = 0;
-	enemy.scale.setTo(3, 3);
+	enemy.scale.setTo(2, 2);
 	enemy.anchor.setTo(.5, 1);
 	enemy.animations.add('idle', [0, 8], 3);
 	enemy.animations.add('attack', [0, 2], 3);
