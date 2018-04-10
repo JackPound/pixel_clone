@@ -40,15 +40,12 @@ var playState = {
 		game.physics.arcade.collide(this.player, this.mob, function(){
 			console.log('hit rat')
 			playState.player.stopPlayer();
+			playState.mob.children[0].stopEnemy();
 		});
 		game.physics.arcade.collide(this.player, self.layer, function(){
 			console.log('hit walls');
 			playState.player.stopPlayer();
-		});
-		if (game.physics.arcade.distanceBetween(this.player, this.mob) < 270) {
-			this.game.physics.arcade.moveToObject(this.enemy, this.player, 70)
-			console.log('nearby')
-		}
+		})
 		// console.log(game.physics.arcade.distanceBetween(this.player, this.mob))
 	}
 };
@@ -124,13 +121,26 @@ function Enemy(x, y) {
 	enemy.animations.add('idle', [0, 8], 3);
 	enemy.animations.add('attack', [0, 2], 3);
 	enemy.goToXY = function(x, y) {
-
+	}
+	enemy.chasePlayer = function(){
+		game.physics.arcade.moveToObject(playState.mob.children[0], playState.player);
 	}
 	enemy.update = function() {
 		enemy.animations.play('idle');
+		 if (55 < game.physics.arcade.distanceBetween(playState.player, playState.mob.children[0]) &&
+			game.physics.arcade.distanceBetween(playState.player, playState.mob.children[0]) < 300) {
+			enemy.chasePlayer()
+			console.log(game.physics.arcade.distanceBetween(playState.player, playState.mob.children[0]));
+		} 
 	}
-	enemy.stop = function() {
-
+	enemy.stopEnemy = function() {
+		playState.mob.children[0].body.velocity.x = playState.mob.children[0].body.velocity.y = 0
 	}
 	return enemy;
-}
+};
+// function chasePlayer(){
+// 	playState.mob.children.forEach(function(e){
+// 		game.physics.arcade.moveToObject(e, this.player, 70);
+// 	})
+// }
+
