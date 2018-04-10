@@ -22,6 +22,7 @@ var playState = {
 		this.mob.forEach(function(enemy, index) {
 			game.physics.enable(enemy, Phaser.Physics.ARCADE);
 			enemy.body.immovable = true;
+
 		});
 				// code doesn't work without x and y destination global for mouse input //
 		xDestination = null;
@@ -32,22 +33,15 @@ var playState = {
 	update: function() {
 		var self = this
 		this.player.update();
-		this.mob.forEach(function(enemy, index) {
-			enemy.update();
-		});
-		game.physics.arcade.collide(this.player, this.mob, function(){
-			console.log('hit rat')
-			playState.player.stopPlayer();
-			playState.mob.children.forEach(function(r){
-				r.stopEnemy();
-			})
-		});
-		game.physics.arcade.collide(this.player, self.layer, function(){
-			console.log('hit walls');
-			playState.player.stopPlayer();
-		})
+		game.physics.arcade.collide(this.player, this.mob, collideRat, null, this);
 	}
 };
+
+function collideRat(player, rat){
+	console.log('hit rat');
+	playState.player.stopPlayer();
+	rat.stopEnemy();
+}
 		// player constructor
 function Player(x, y) {
 	var player = game.add.sprite(game.world.centerX, game.world.centerY, 'warrior');
@@ -123,16 +117,16 @@ function Enemy(x, y) {
 	}
 	enemy.chasePlayer = function(){
 		// game.physics.arcade.moveToObject(playstate.mob.children[0], playState.player);
-		playState.mob.children.forEach(function(r){
-		game.physics.arcade.moveToObject(r, playState.player)
-		})
+		
+		game.physics.arcade.moveToObject(this, playState.player)
+
 	}
 	enemy.update = function() {
 		enemy.animations.play('idle');
 		 playState.mob.children.forEach(function(r){
 		 	if (55 < game.physics.arcade.distanceBetween(playState.player, r) &&
 				game.physics.arcade.distanceBetween(playState.player, r) < 200) 
-		 			{enemy.chasePlayer()}
+		 			{r.chasePlayer()}
 		 })
 		 // if (55 < game.physics.arcade.distanceBetween(playState.player, playState.mob.children[0]) &&
 			// game.physics.arcade.distanceBetween(playState.player, playState.mob.children[0]) < 300) {
