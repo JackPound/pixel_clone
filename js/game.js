@@ -8,6 +8,7 @@ game.state.add('boot', bootState);
 game.state.add('load', loadState);
 game.state.add('title', titleState);
 game.state.add('play', playState);
+game.state.add('gameOver', gameOver);
 
 //call the boot state
 game.state.start('boot');

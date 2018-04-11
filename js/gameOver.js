@@ -1,0 +1,16 @@
+console.log('title.js linked');
+
+var gameOver = {
+	create: function (){
+		var nameLabel = game.add.text(350, 100, 'Oh rats, you died...', {
+			font: '14px Space Mono', fill: '#ffffff'
+		});
+		game.input.activePointer.capture = true;
+		// game.state.start('play');
+	},
+	update: function(){
+		if (game.input.activePointer.isDown) {
+			game.state.start('play')
+		}
+	}
+}

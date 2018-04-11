@@ -52,15 +52,23 @@ function Player(x, y) {
 	player.anchor.setTo(.5, 1);
 	player.animations.add('idle', [0,1], .4);
 	player.animations.add('walk', [0,2], 4);
+	player.animations.add('death', [8, 10], 2);
 	player.health = 100;
 
 
 	player.update = function() {
 		player.appearance();
 		player.movePlayer();
+		player.death()
 	};
 	player.attack = function() {
 
+	};
+	player.death = function() {
+		if (player.health <= 0) {
+			player.animations.play('death');
+			game.state.start('gameOver')
+		}
 	}
 			//sprite used while walk/idle
 	player.appearance = function() {
@@ -166,7 +174,7 @@ function collideRat(player, rat){
 
 function takeDamage() {
 	if (cooldown < game.time.time) {
-		playState.player.health -=10;
+		playState.player.health -=5;
 		cooldown = game.time.time += 2000
 		console.log(playState.player.health);
 	}	
