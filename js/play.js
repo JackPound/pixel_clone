@@ -4,11 +4,12 @@ var playState = {
 	player: null,
 	mob: null,
 	layer: null,
+
 	create: function() {
 				// set up world from imported TILED //
 		var map = game.add.tilemap('room1');
 		map.addTilesetImage('tiles1', 'tiles1');
-		map.setCollision([4]);
+		map.setCollision([2, 5]);
 		this.layer = map.createLayer('floor');
 		this.layer = map.createLayer('walls');
 				// bring new player into world //
@@ -22,26 +23,24 @@ var playState = {
 		this.mob.forEach(function(enemy, index) {
 			game.physics.enable(enemy, Phaser.Physics.ARCADE);
 			enemy.body.immovable = true;
-
 		});
+		
 				// code doesn't work without x and y destination global for mouse input //
 		xDestination = null;
 		yDestination = null;
 		game.input.activePointer.capture = true;
+		cooldown = game.time.time;
 	},
 				// update function to constantly run updates on character state / enemy state / world state
 	update: function() {
 		var self = this
 		this.player.update();
 		game.physics.arcade.collide(this.player, this.mob, collideRat, null, this);
+		game.physics.arcade.collide(this.player, "walls", function(){
+			playState.player.playerStop();
+		})
 	}
 };
-
-function collideRat(player, rat){
-	console.log('hit rat');
-	playState.player.stopPlayer();
-	rat.stopEnemy();
-}
 		// player constructor
 function Player(x, y) {
 	var player = game.add.sprite(game.world.centerX, game.world.centerY, 'warrior');
@@ -53,11 +52,16 @@ function Player(x, y) {
 	player.anchor.setTo(.5, 1);
 	player.animations.add('idle', [0,1], .4);
 	player.animations.add('walk', [0,2], 4);
+	player.health = 100;
+
 
 	player.update = function() {
 		player.appearance();
 		player.movePlayer();
 	};
+	player.attack = function() {
+
+	}
 			//sprite used while walk/idle
 	player.appearance = function() {
 		let playerVelocity = player.body.velocity
@@ -105,10 +109,12 @@ function Player(x, y) {
 };
 		// rat enemy constructor
 function Enemy(x, y) {
+	var self = this;
 	var enemy = game.add.sprite(x, y, 'rat')
 	enemy.xDest = x;
 	enemy.yDest = y;
 	enemy.frame = 0;
+	enemy.attackCooldown = game.time.time;
 	enemy.scale.setTo(2, 2);
 	enemy.anchor.setTo(.5, 1);
 	enemy.animations.add('idle', [0, 8], 3);
@@ -116,24 +122,34 @@ function Enemy(x, y) {
 	enemy.goToXY = function(x, y) {
 	}
 	enemy.chasePlayer = function(){
-		// game.physics.arcade.moveToObject(playstate.mob.children[0], playState.player);
-		
 		game.physics.arcade.moveToObject(this, playState.player)
-
 	}
 	enemy.update = function() {
-		enemy.animations.play('idle');
-		 playState.mob.children.forEach(function(r){
-		 	if (55 < game.physics.arcade.distanceBetween(playState.player, r) &&
-				game.physics.arcade.distanceBetween(playState.player, r) < 200) 
-		 			{r.chasePlayer()}
-		 })
-		 // if (55 < game.physics.arcade.distanceBetween(playState.player, playState.mob.children[0]) &&
-			// game.physics.arcade.distanceBetween(playState.player, playState.mob.children[0]) < 300) {
-			// enemy.chasePlayer()
-			// console.log(game.physics.arcade.distanceBetween(playState.player, playState.mob.children[0]));
-			// }
+		this.animations.play('idle');
+		playState.mob.children.forEach(function(r){
+			if (55 < game.physics.arcade.distanceBetween(playState.player, r) && game.physics.arcade.distanceBetween(playState.player, r) < 180) {
+				r.chasePlayer()
+			} else {
+				r.stopEnemy();
+			};
+			if (55 > game.physics.arcade.distanceBetween(playState.player, r)) {
+				takeDamage();
+			};
+		})
 	}
+
+	// enemy.readyToAttack = function() {
+		// if (55 > game.physics.arcade.distanceBetween(playState.player, this)) {
+		// 	enemy.attack();
+		// };
+	// }
+	// enemy.attack = function() {
+	// 	if (self.cooldown < game.time.time) {
+	// 		playState.player.health -= 10;
+	// 		self.cooldown =game.time.time += 2000;
+	// 		console.log(playState.player.health)
+	// 	}
+	// }
 	enemy.stopEnemy = function() {
 		playState.mob.children.forEach(function(r){
 			r.body.velocity.x = r.body.velocity.y = 0
@@ -141,3 +157,17 @@ function Enemy(x, y) {
 	}
 	return enemy;
 };
+
+function collideRat(player, rat){
+	console.log('hit rat');
+	playState.player.stopPlayer();
+	rat.stopEnemy();
+}
+
+function takeDamage() {
+	if (cooldown < game.time.time) {
+		playState.player.health -=10;
+		cooldown = game.time.time += 2000
+		console.log(playState.player.health);
+	}	
+}
