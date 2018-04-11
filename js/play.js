@@ -1,21 +1,17 @@
 console.log('play.js linked');
 
+
 var playState = {
 	player: null,
 	mob: null,
 	layer: null,
-
 	create: function() {
-				// set up world from imported TILED //
+				// set up world from imported TILED //]
 		var map = game.add.tilemap('room1');
 		map.addTilesetImage('tiles1', 'tiles1');
 		map.setCollision([2, 5]);
 		this.layer = map.createLayer('floor');
 		this.layer = map.createLayer('walls');
-				// bring new player into world //
-		this.player = new Player(game.world.centerX, game.world.centerY);
-		game.add.existing(this.player);
-		game.physics.enable(this.player, Phaser.Physics.ARCADE);
 				// bring mob of enemies into world //
 		this.mob = game.add.group();
 		this.mob.add(Enemy(100, 100));
@@ -24,28 +20,34 @@ var playState = {
 			game.physics.enable(enemy, Phaser.Physics.ARCADE);
 			enemy.body.immovable = true;
 		});
-		
+				// bring new player into world //
+		this.player = new Player(game.world.centerX, game.world.centerY);
+		game.add.existing(this.player);
+		game.physics.enable(this.player, Phaser.Physics.ARCADE);
 				// code doesn't work without x and y destination global for mouse input //
 		xDestination = null;
 		yDestination = null;
 		game.input.activePointer.capture = true;
 		cooldown = game.time.time;
+		score = 25;
+		healthBar = game.add.text(100, 8, this.player.health + "/100 HP", {
+			font: '20px Space Mono',
+		});
 	},
 				// update function to constantly run updates on character state / enemy state / world state
 	update: function() {
-		var self = this
 		this.player.update();
 		game.physics.arcade.collide(this.player, this.mob, collideRat, null, this);
-		game.physics.arcade.collide(this.player, "walls", function(){
-			playState.player.playerStop();
-		})
+		// game.world.children[4]._text = playState.player.health + "/100 HP"
+		healthBar.setText(playState.player.health + "/100 HP");
+	// });
 	}
 };
 		// player constructor
 function Player(x, y) {
 	var player = game.add.sprite(game.world.centerX, game.world.centerY, 'warrior');
 	player.frame = 0;
-	// player.z = 3;
+	player.z = 3;
 	player.scale.setTo(3,3);
 	player.xDestination = x;
 	player.yDestination = y;
@@ -122,11 +124,14 @@ function Enemy(x, y) {
 	enemy.xDest = x;
 	enemy.yDest = y;
 	enemy.frame = 0;
+	enemy.health = 25;
 	enemy.attackCooldown = game.time.time;
 	enemy.scale.setTo(2, 2);
 	enemy.anchor.setTo(.5, 1);
 	enemy.animations.add('idle', [0, 8], 3);
-	enemy.animations.add('attack', [0, 2], 3);
+	enemy.animations.add('attack', [0, 3], 10);
+	enemy.animations.add('death', [14, 15, 16], 1);
+	enemy.invincible = game.time.time;
 	enemy.goToXY = function(x, y) {
 	}
 	enemy.chasePlayer = function(){
@@ -134,14 +139,16 @@ function Enemy(x, y) {
 	}
 	enemy.update = function() {
 		this.animations.play('idle');
+		enemy.death();
 		playState.mob.children.forEach(function(r){
 			if (55 < game.physics.arcade.distanceBetween(playState.player, r) && game.physics.arcade.distanceBetween(playState.player, r) < 180) {
 				r.chasePlayer()
 			} else {
 				r.stopEnemy();
 			};
-			if (55 > game.physics.arcade.distanceBetween(playState.player, r)) {
+			if (55 > game.physics.arcade.distanceBetween(playState.player, r) && r.animations.currentAnim.name != 'death')  {
 				takeDamage();
+				// enemy.animations.play('attack');
 			};
 		})
 	}
@@ -163,6 +170,20 @@ function Enemy(x, y) {
 			r.body.velocity.x = r.body.velocity.y = 0
 		})
 	}
+	enemy.death = function() {
+		if (this.health <= 0) {
+			this.animations.play('death');
+			this.body.enable = false;
+		}
+
+	}
+	enemy.takeDamage = function() {
+		if (this.invincible < game.time.time) {
+			this.health -= 5;
+			console.log(this.health + 'ratHP');
+			this.invincible = game.time.time += 1000;
+		}
+	}
 	return enemy;
 };
 
@@ -170,6 +191,7 @@ function collideRat(player, rat){
 	console.log('hit rat');
 	playState.player.stopPlayer();
 	rat.stopEnemy();
+	rat.takeDamage();
 }
 
 function takeDamage() {
