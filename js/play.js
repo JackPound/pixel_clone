@@ -1,4 +1,4 @@
-console.log('play.js linked');
+// console.log('play.js linked');
 
 
 var playState = {
@@ -29,10 +29,9 @@ var playState = {
 		yDestination = null;
 		game.input.activePointer.capture = true;
 		cooldown = game.time.time;
-		score = 25;
-		healthBar = game.add.text(100, 8, this.player.health + "/100 HP", {
-			font: '20px Space Mono',
-		});
+		score = 0;
+		scoreBar = game.add.text (300, 8, "Score:" + score, {font: '24px Space Mono'});
+		healthBar = game.add.text(100, 8, this.player.health + "/100 HP", {font: '24px Space Mono'});
 	},
 				// update function to constantly run updates on character state / enemy state / world state
 	update: function() {
@@ -40,6 +39,9 @@ var playState = {
 		game.physics.arcade.collide(this.player, this.mob, collideRat, null, this);
 		// game.world.children[4]._text = playState.player.health + "/100 HP"
 		healthBar.setText(playState.player.health + "/100 HP");
+		checkScore();
+		scoreBar.setText("Rats Smashed:" + score);
+		
 	// });
 	}
 };
@@ -56,7 +58,6 @@ function Player(x, y) {
 	player.animations.add('walk', [0,2], 4);
 	player.animations.add('death', [8, 10], 2);
 	player.health = 100;
-
 
 	player.update = function() {
 		player.appearance();
@@ -132,6 +133,7 @@ function Enemy(x, y) {
 	enemy.animations.add('attack', [0, 3], 10);
 	enemy.animations.add('death', [14, 15, 16], 1);
 	enemy.invincible = game.time.time;
+	enemy.dead = false;
 	enemy.goToXY = function(x, y) {
 	}
 	enemy.chasePlayer = function(){
@@ -174,13 +176,14 @@ function Enemy(x, y) {
 		if (this.health <= 0) {
 			this.animations.play('death');
 			this.body.enable = false;
+			this.dead = true;
 		}
 
 	}
 	enemy.takeDamage = function() {
 		if (this.invincible < game.time.time) {
 			this.health -= 5;
-			console.log(this.health + 'ratHP');
+			// console.log(this.health + ' ratHP');
 			this.invincible = game.time.time += 1000;
 		}
 	}
@@ -188,7 +191,7 @@ function Enemy(x, y) {
 };
 
 function collideRat(player, rat){
-	console.log('hit rat');
+	// console.log('hit rat');
 	playState.player.stopPlayer();
 	rat.stopEnemy();
 	rat.takeDamage();
@@ -198,6 +201,15 @@ function takeDamage() {
 	if (cooldown < game.time.time) {
 		playState.player.health -=5;
 		cooldown = game.time.time += 2000
-		console.log(playState.player.health);
+		// console.log(playState.player.health + " playerHP");
 	}	
+}
+
+function checkScore() {
+	score = 0
+	playState.mob.children.forEach(function(e) {
+		if (e.animations.currentAnim.name == 'death') {
+			score = score + 1
+		}
+	})
 }

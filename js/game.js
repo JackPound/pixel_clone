@@ -1,4 +1,4 @@
-console.log('game.js linked');
+// console.log('game.js linked');
 
 var game = new Phaser.Game(736, 512 , Phaser.AUTO, null, 'gameDiv');
 

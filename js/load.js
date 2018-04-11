@@ -1,4 +1,4 @@
-console.log('load.js linked');
+// console.log('load.js linked');
 
 var loadState={
 	preload: function(){
