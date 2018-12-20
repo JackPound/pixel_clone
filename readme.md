@@ -5,7 +5,7 @@
 Smash as many rats as possible before your health reaches 0, enemy rats touching you will damage you over
 time!
 
-## Controlls
+## Controls
 
 Move - Mouse point and left click  
 Attack - Point at nearby enemy and left click
