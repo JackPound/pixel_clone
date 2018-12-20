@@ -33,6 +33,7 @@ Add basic power up items via dead rat loot:
 - Stronger Attacks  
 - Invincibility  
 - Speedier Movement  
+
 Implement local storage scoreboard.  
 Fix listed bugs.  
 Enemy variety.  
