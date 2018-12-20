@@ -38,5 +38,13 @@ Implement local storage scoreboard.
 Fix listed bugs.  
 Enemy variety.  
 
+## Vision for launching on itch.io
+
+Single stage high score game, similar to working version.  
+Multiple enemy types with different characteristics.  
+Clean and clear gameplay, audio and visuals effects of attacking/being attacked.  
+Persistent local storage scoreboard or online scoreboard.  
+Various power ups dropped from defeated enemies to provide fun gameplay.
+
 
 Built using Phaser 2.10.3. and Tiled 1.1.4
