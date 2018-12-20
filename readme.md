@@ -1,13 +1,17 @@
-Do you like smashing rats, well boy do I have the game for you.
+###Do you like smashing rats? Well boy do I have the game for you.
 
-Objective:
-	Smash as many rats as possible before your health reaches 0, enemy rats touching you will damage you over time!
-Controlls:
-	Move - Mouse point and left click
-	Attack - Point at nearby enemy and left click
+##Objective
+	
+Smash as many rats as possible before your health reaches 0, enemy rats touching you will damage you over
+time!
+
+##Controlls
+
+Move - Mouse point and left click  
+Attack - Point at nearby enemy and left click
 
 
--The Making Of Rat Smasher-
+##The Making Of Rat Smasher
 
 This was supposed to be a pixel dungeon clone, with a player character moving through a series of rooms defeating various enemies and looking for the exit to the next floor. But that turned to be far, far, too ambitious for a six day project (having learned javascript basics only a week earlier). So here we have Rat Smasher Deluxe 2.0. 
 
@@ -15,23 +19,23 @@ I started creating a player character who could move around. Originally I had a 
 
 If I had more time the first things I would do are get some audio files added and some correctly implement attacking logic between the player and enemies. Right now it's kind of hacked together in a very ugly way. Smashing rats isn't quite as fun without some good sound effects and smooth attack animations. I would also find out how to make Tiled tilemaps have collision with the player so I could easily make more maps and have transitions into other rooms which hold different enemies. That's really the tip of the iceberg. I'd also like to add different player classes, entire inventory systems, leveled skills, interactive environment, enemy/boss variety, saving game progress, ect ect ect. Then there's the whole wow this looks like hot garbage from the 90's web page design that could be worked on. 
 
--Bugs-
+##Bugs
 
-If you're surrounded by multiple enemies you still only get hit at the same rate as if you're fighting a single enemy.
-Walls act functionally as floor, no collision detection for player character and walls.
-If too many enemies spawn on the screen they will all stop, I've only seen that once.
+If you're surrounded by multiple enemies you still only get hit at the same rate as if you're fighting a single enemy.  
+Walls act functionally as floor, no collision detection for player character and walls.  
+If too many enemies spawn on the screen they will all stop, I've only seen that once.  
 
--To Do-
+##To Do
 
-Add audio and animation to attacks from player character and enemies so player clearly understands rate of attack.
-Add basic power up items via dead rat loot.
-	Health Potions
-	Stronger Attacks
-	Invincibility
-	Speedier Movement
-Implement local storage scoreboard.
-Fix listed bugs.
-Enemy variety.
+Add audio and animation to attacks from player character and enemies so player clearly understands rate of attack.  
+Add basic power up items via dead rat loot:  
+- Health Potions  
+- Stronger Attacks  
+- Invincibility  
+- Speedier Movement  
+Implement local storage scoreboard.  
+Fix listed bugs.  
+Enemy variety.  
 
 
 Built using Phaser 2.10.3. and Tiled 1.1.4
