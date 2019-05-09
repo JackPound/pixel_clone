@@ -4,11 +4,10 @@ var playState = {
 	layer: null,
 	create: function() {
 				// set up world from imported TILED //
-		var map = game.add.tilemap('room1');
-		map.addTilesetImage('tiles1', 'tiles1');
-		map.setCollision([2, 5]);
-		this.layer = map.createLayer('floor');
-		this.layer = map.createLayer('walls');
+		map = game.add.tilemap('room1');
+		map.addTilesetImage('tiles1');
+    walls = map.createLayer('walls');
+    map.setCollisionBetween(5, 5, true);
 				// bring mob of enemies into world //
 		this.mob = game.add.group();
 		spawnRat()
@@ -29,11 +28,17 @@ var playState = {
 	update: function() {
 		this.player.update();
 		game.physics.arcade.collide(this.player, this.mob, collideRat, null, this);
+    game.physics.arcade.collide(this.player, walls, collideWall, null, this);
 		checkScore();
 		scoreBar.setText("Rats Smashed:" + score);
 		healthBar.setText(playState.player.health + "/100 HP");
 	}
 };
+
+function collideWall(player, wall){
+  console.log("WALL");
+}
+
 				// player constructor //
 function Player(x, y) {
 	var player = game.add.sprite(game.world.centerX, game.world.centerY, 'warrior');
@@ -87,7 +92,7 @@ function Player(x, y) {
 				playerVelocity.y = 150
 			} else if (player.y > yDestination) {
 				playerVelocity.y = -150
-			}	
+			}
 		}
 		if (player.y - yDestination < 3 && player.y - yDestination > -3) {
 			playerVelocity.y = 0
@@ -161,7 +166,7 @@ function takeDamage() {
 	if (cooldown < game.time.time) {
 		playState.player.health -=5;
 		cooldown = game.time.time += 2000
-	}	
+	}
 }
 
 function checkScore() {
